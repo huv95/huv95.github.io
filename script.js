@@ -2,14 +2,12 @@ window.onload = function() {
     const canvas = document.getElementById('pixelCanvas');
     const ctx = canvas.getContext('2d');
 
-    // Kích thước canvas
     const width = 500;
     const height = 500;
     const pixelSize = 20;
     canvas.width = width;
     canvas.height = height;
 
-    // Mảng câu hỏi và đáp án
     const questions = [
         { question: "What is 5 + 5?", answer: "10" },
         { question: "What is the capital of France?", answer: "Paris" },
@@ -23,23 +21,22 @@ window.onload = function() {
         { question: "What is the square root of 64?", answer: "8" }
     ];
 
-    let currentQuestionIndex = 0;
-    const questionElement = document.getElementById('question');
-    const answerElement = document.getElementById('answer');
-    const submitButton = document.getElementById('submit');
+    const questionContainer = document.getElementById('question-container');
 
     // Load hình ảnh (ban đầu là màu trắng)
     const image = new Image();
     image.src = 'images/lon.jpg';  // Thay đường dẫn ảnh của bạn
+
     image.onload = function() {
         // Vẽ ảnh màu trắng lên canvas
         ctx.fillStyle = "white";
         ctx.fillRect(0, 0, width, height);
 
-        // Khởi tạo lưới pixel
         createPixelGrid();
+        displayQuestions();
     };
 
+    // Tạo lưới pixel
     function createPixelGrid() {
         for (let y = 0; y < height; y += pixelSize) {
             for (let x = 0; x < width; x += pixelSize) {
@@ -47,36 +44,47 @@ window.onload = function() {
                 ctx.strokeRect(x, y, pixelSize, pixelSize);
             }
         }
-        // Hiển thị câu hỏi đầu tiên
-        showQuestion();
     }
 
-    function showQuestion() {
-        if (currentQuestionIndex < questions.length) {
-            questionElement.innerText = questions[currentQuestionIndex].question;
-        } else {
-            questionElement.innerText = "You've revealed the whole image!";
-            submitButton.disabled = true;
+    // Hiển thị tất cả câu hỏi và input cho người chơi trả lời
+    function displayQuestions() {
+        questions.forEach((item, index) => {
+            const questionBlock = document.createElement('div');
+            questionBlock.classList.add('question-block');
 
-            // Mở toàn bộ bức tranh khi trả lời hết tất cả các câu hỏi
-            revealFullImage();
-        }
+            const questionText = document.createElement('p');
+            questionText.innerText = `Question ${index + 1}: ${item.question}`;
+            questionBlock.appendChild(questionText);
+
+            const answerInput = document.createElement('input');
+            answerInput.type = 'text';
+            answerInput.id = `answer-${index}`;
+            answerInput.placeholder = 'Your answer';
+            questionBlock.appendChild(answerInput);
+
+            const submitButton = document.createElement('button');
+            submitButton.innerText = 'Submit';
+            submitButton.id = `submit-${index}`;
+            submitButton.addEventListener('click', function() {
+                checkAnswer(index, answerInput.value);
+            });
+            questionBlock.appendChild(submitButton);
+
+            questionContainer.appendChild(questionBlock);
+        });
     }
 
-    // Xử lý khi nhấn nút "Submit"
-    submitButton.addEventListener('click', function() {
-        const userAnswer = answerElement.value.trim().toLowerCase();
-        const correctAnswer = questions[currentQuestionIndex].answer.toLowerCase();
-
-        if (userAnswer === correctAnswer) {
+    // Kiểm tra câu trả lời và mở pixel nếu đúng
+    function checkAnswer(index, userAnswer) {
+        const correctAnswer = questions[index].answer.toLowerCase();
+        if (userAnswer.trim().toLowerCase() === correctAnswer) {
             revealPixels();
-            currentQuestionIndex++;
-            answerElement.value = '';
-            showQuestion();
+            document.getElementById(`answer-${index}`).disabled = true;
+            document.getElementById(`submit-${index}`).disabled = true;  // Vô hiệu hóa nút Submit
         } else {
-            alert("Incorrect! Try again.");
+            alert("Incorrect answer, try again!");
         }
-    });
+    }
 
     // Tô màu các pixel dần dần khi trả lời đúng
     function revealPixels() {
@@ -87,9 +95,5 @@ window.onload = function() {
             const y = Math.floor(Math.random() * (height / pixelSize)) * pixelSize;
             ctx.drawImage(image, x, y, pixelSize, pixelSize, x, y, pixelSize, pixelSize);
         }
-    }
-
-    function revealFullImage() {
-        ctx.drawImage(image, 0, 0, width, height);
     }
 };

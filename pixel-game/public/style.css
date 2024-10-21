@@ -1,0 +1,47 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    display: flex;
+}
+
+.image-area, .question-area {
+    width: 50%;
+    padding: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+.pixel {
+    width: 100%; /* Để cho pixel chiếm toàn bộ kích thước của ô lưới */
+    height: 100%; /* Để cho pixel chiếm toàn bộ kích thước của ô lưới */
+    /*background-color: #ffffff; /* Màu trắng cho pixel chưa mở */
+    border: 1px solid rgba(0, 0, 0, 0.1); /* Thêm đường viền cho pixel */
+}
+
+
+#image-container {
+    position: relative;
+    width: 500px; /* Đặt kích thước của container hình ảnh */
+    height: 500px; /* Đặt kích thước của container hình ảnh */
+    overflow: hidden; /* Ẩn các phần hình ảnh ngoài kích thước đã định */
+}
+
+.pixels {
+    position: absolute;
+    width: 20px; /* Kích thước của mỗi pixel */
+    height: 20px; /* Kích thước của mỗi pixel */
+    background-color: white; /* Màu nền ô vuông */
+    border: 1px solid rgba(0, 0, 0, 0.1); /* Viền cho ô vuông */
+    display: none; /* Ẩn ô vuông ban đầu */
+}
